@@ -3,7 +3,7 @@ function [R] = create_reliability_map(C,T,D,E,TR,nbins)
 
 % Inputs
 % "C" : this is a cell array. Each entry corresponds to a different scan. Contains the ".data" field for CIFTI files containing the relevant resting-state time-courses.
-% "T" : this is a cell array. Each entry corresponds to a different scan. Contains a temporal mask (a vector of zeros and ones; with zeros representing motion contaminated time points). Note that variables
+% "T" : this is a cell array. Each entry corresponds to a different scan. Contains a temporal mask (a vector of zeros and ones; with zeros representing motion contaminated time points). 
 % "D" : this is a matrix ; where entry i,j represents the distance in geodesic (for vertex to vertex) and Euclidean (for voxel to voxel or vertex to voxel) space between points i and j. 
 % "E" : this is an array of values indicating the different epochs to test. For example, E = 1:10 would prompt the script to create 10 reliability maps; from 1 minute to 10 minutes; in one minute steps. 
 % "TR" : this is the TR used to acquire the data. 
