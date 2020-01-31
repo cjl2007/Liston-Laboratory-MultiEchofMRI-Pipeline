@@ -7,7 +7,7 @@ function [R] = create_reliability_map(C,T,D,E,TR,nbins)
 % "D" : this is a matrix ; where entry i,j represents the distance in geodesic (for vertex to vertex) and Euclidean (for voxel to voxel or vertex to voxel) space between points i and j. 
 % "E" : this is an array of values indicating the different epochs to test. For example, E = 1:10 would prompt the script to create 10 reliability maps; from 1 minute to 10 minutes; in one minute steps. 
 % "TR" : this is the TR used to acquire the data. 
-% "nbins" : this is the number of points considered at once. Smaller numbers of bins saves RAM. nbins = ~20 seems to work okay. 
+% "nbins" : this variable controls fraction of the total number of points considered at once. Set to a larger number to save RAM. 
 
 % Outputs
 % "R" : is a P x E array; where P = the number of points in the brain and E = the number of epochs tested. The value for point "i" in this array represents how similair the
