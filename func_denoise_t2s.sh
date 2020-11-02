@@ -48,8 +48,8 @@ for hemisphere in lh rh ; do
 	REG_MSMSulc_FSLR32k="$Subdir"/anat/MNINonLinear/fsaverage_LR32k/$Subject.$Hemisphere.sphere.32k_fs_LR.surf.gii
 
 	# create temporary cortical ribbon image;
-    wb_command -volume-math "(ribbon > ($ribbon - 0.01)) * (ribbon < ($ribbon + 0.01))" \
-    "$Subdir"/anat/MNINonLinear/temp_ribbon.nii.gz -var ribbon "$Subdir"/anat/MNINonLinear/ribbon.nii.gz
+    	wb_command -volume-math "(ribbon > ($ribbon - 0.01)) * (ribbon < ($ribbon + 0.01))" \
+    	"$Subdir"/anat/MNINonLinear/temp_ribbon.nii.gz -var ribbon "$Subdir"/anat/MNINonLinear/ribbon.nii.gz
 
 	# map t2s map from volume to surface using "myelin" method;
 	wb_command -volume-to-surface-mapping "$Subdir"/func/t2star/T2star_nonlin.nii.gz "$MIDTHICK" \
