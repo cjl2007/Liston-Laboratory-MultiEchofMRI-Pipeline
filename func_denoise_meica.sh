@@ -42,8 +42,7 @@ source activate me_v9
 func () {
 
 	# remove any existing dirs.
-	rm -rf "$2"/func/rest/"$3"/tedana*/ \
-	> /dev/null 2>&1 
+	rm -rf "$2"/func/rest/"$3"/Tedana*/ > /dev/null 2>&1 
 
 	# make the explicit brain mask and T2* map match; 
 	fslmaths "$2"/func/rest/"$3"/Rest_E1_nonlin.nii.gz -Tmean "$2"/func/rest/"$3"/tmp.nii.gz
