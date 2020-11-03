@@ -67,4 +67,4 @@ func () {
 }
 
 export -f func # run tedana;
-parallel --jobs $NTHREADS func ::: $FS ::: $Subdir ::: $data_dirs #> /dev/null 2>&1 
+parallel --jobs $NTHREADS func ::: $FS ::: $Subdir ::: $data_dirs > /dev/null 2>&1 
