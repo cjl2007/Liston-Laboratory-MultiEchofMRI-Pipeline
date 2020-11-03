@@ -53,7 +53,7 @@ func () {
 	# run the "tedana" workflow; 
 	tedana -d "$2"/func/rest/"$3"/Rest_E*_nonlin.nii.gz -e $(cat "$2"/func/rest/"$3"/te.txt) --out-dir "$2"/func/rest/"$3"/Tedana/ \
 	--tedpca kundu --fittype curvefit --mask "$2"/func/xfms/rest/T1w_nonlin_brain_2mm_mask.nii.gz --t2smap "$2"/func/rest/"$3"/T2star_nonlin.nii.gz \
-	--maxit 1000 --maxrestart 15 --lowmem # specify more iterations / restarts to increase likelihood of ICA convergence (also increases possible runtime).
+	--maxit 1000 --maxrestart 10  # specify more iterations / restarts to increase likelihood of ICA convergence (also increases possible runtime).
 	
 	# remove temporary files;
 	rm "$2"/func/rest/"$3"/brain_mask.nii.gz
@@ -67,4 +67,4 @@ func () {
 }
 
 export -f func # run tedana;
-parallel --jobs $NTHREADS func ::: $FS ::: $Subdir ::: $data_dirs > /dev/null 2>&1 
+parallel --jobs $NTHREADS func ::: $FS ::: $Subdir ::: $data_dirs #> /dev/null 2>&1 
