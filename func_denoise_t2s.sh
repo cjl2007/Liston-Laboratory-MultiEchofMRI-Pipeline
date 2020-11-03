@@ -48,8 +48,8 @@ for hemisphere in lh rh ; do
 	REG_MSMSulc_FSLR32k="$Subdir"/anat/MNINonLinear/fsaverage_LR32k/$Subject.$Hemisphere.sphere.32k_fs_LR.surf.gii
 
 	# create temporary cortical ribbon image in atlas space;
-    wb_command -volume-math "(ribbon > ($ribbon - 0.01)) * (ribbon < ($ribbon + 0.01))" "$Subdir"/anat/MNINonLinear/temp_ribbon.nii.gz -var ribbon "$Subdir"/anat/MNINonLinear/ribbon.nii.gz
-    flirt -in "$Subdir"/anat/MNINonLinear/temp_ribbon.nii.gz -ref "$Subdir"/func/t2star/T2star_nonlin.nii.gz -out "$Subdir"/anat/MNINonLinear/temp_ribbon.nii.gz -applyxfm -init "$FSL"/ident.mat
+    	wb_command -volume-math "(ribbon > ($ribbon - 0.01)) * (ribbon < ($ribbon + 0.01))" "$Subdir"/anat/MNINonLinear/temp_ribbon.nii.gz -var ribbon "$Subdir"/anat/MNINonLinear/ribbon.nii.gz
+    	flirt -in "$Subdir"/anat/MNINonLinear/temp_ribbon.nii.gz -ref "$Subdir"/func/t2star/T2star_nonlin.nii.gz -out "$Subdir"/anat/MNINonLinear/temp_ribbon.nii.gz -applyxfm -init "$FSL"/ident.mat
 
 	# map t2s map from volume to surface using "myelin" method;
 	wb_command -volume-to-surface-mapping "$Subdir"/func/t2star/T2star_nonlin.nii.gz "$MIDTHICK" \
