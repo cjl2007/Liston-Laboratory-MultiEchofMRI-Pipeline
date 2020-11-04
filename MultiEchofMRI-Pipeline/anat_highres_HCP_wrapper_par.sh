@@ -1,5 +1,5 @@
 #!/bin/bash
-# CJL; (cjl2007@med.cornell.edu)
+# Note: this is a wrapper for the PreFreesurfer, Freesurfer, and PostFreeSurfer HCP scripts. 
 
 StudyFolder=$1 # location of Subject folder
 Subject=$2 # space delimited list of subject IDs
