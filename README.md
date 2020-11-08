@@ -5,4 +5,13 @@ This pipeline was designed to process longitudinal multi-echo fMRI data. It call
 
 Important Note: Code and instructions for use will be updated on a rolling basis to ensure generalizability of code to other computing environments.
 
-Instructions: Data must be organized in the expected manner (see "ExampleDataOrganization" folder). Some images must also be accompanied by .json files (which can be produced by dicom conversion programs; e.g., "dcm2niix"). The .json files will be used at various points in the functional pipeline to obtain information needed for preprocessing (echo spacing, total readout time, slice time information, etc.) and denoising (echo times, etc.). 
+Instructions for use: Data must be organized in the expected manner (see "ExampleDataOrganization" folder). Some images must also be accompanied by .json files (which can be produced by dicom conversion programs; e.g., "dcm2niix"). The .json files will be used at various points in the functional pipeline to obtain information needed for preprocessing (echo spacing, total readout time, slice time information, etc.) and denoising (echo times, etc.). 
+
+Required Software
+- Matab
+- Freesurfer 
+- FSL
+- Connectome Workbench 
+- ANTS
+- Tedana
+
