@@ -6,8 +6,6 @@ StudyFolder=$2
 Subdir="$StudyFolder"/"$Subject"
 RESOURCES=$3
 T1wTemplate2mm=$4
-FS="$RESOURCES/FS" # dir. with FreeSurfer (FS) atlases 
-FSL="$RESOURCES/FSL" # dir. with FSL (FSL) atlases 
 SUBJECTS_DIR="$Subdir"/anat/T1w/ # note: this is used for "bbregister" calls;
 
 # define & create a temporary directory;
@@ -38,8 +36,8 @@ for s in $sessions ; do
 		"$WDIR"/Bias_field_"$s"_"$r".nii.gz] # estimate field inhomog.; 
 
 		# resample bias field image (ANTs --> FSL orientation);
-		flirt -in "$WDIR"/Bias_field_"$s"_"$r".nii.gz -ref "$WDIR"/TMP_1.nii.gz -applyxfm -init "$FSL"/ident.mat -out "$WDIR"/Bias_field_"$s"_"$r".nii.gz -interp spline
-		cp "$WDIR"/Bias_field_"$s"_"$r".nii.gz "$Subdir"/func/rest/session_"$s"/run_"$r"/Bias_field.nii.gz
+		flirt -in "$WDIR"/Bias_field_"$s"_"$r".nii.gz -ref "$WDIR"/TMP_1.nii.gz -applyxfm -init \
+		"$RESOURCES"/ident.mat -out "$WDIR"/Bias_field_"$s"_"$r".nii.gz -interp spline
 
 		# sweep the te;
 		for i in $te ; do
@@ -72,7 +70,7 @@ images=("$WDIR"/SBref_*.nii.gz)
 if [ "${#images[@]}" \> 1 ]; then
 
 	# align and average the single-band reference images;
-	FuncAverage -n -o "$Subdir"/func/xfms/rest/SBref_avg.nii.gz \
+	"$RESOURCES"/FuncAverage -n -o "$Subdir"/func/xfms/rest/SBref_avg.nii.gz \
 	"$WDIR"/SBref_*.nii.gz > /dev/null 2>&1  
 
 else
@@ -91,11 +89,11 @@ cp -rf "$Subdir"/anat/T1w/"$Subject" "$Subdir"/anat/T1w/freesurfer > /dev/null 2
 echo_spacing=$(cat $Subdir/func/xfms/rest/EffectiveEchoSpacing.txt) 
 
 # register single-band reference image to T1-weighted anatomical image; correct for spatial distortions
-"$FSL"/epi_reg_dof --dof=6 --epi="$Subdir"/func/xfms/rest/SBref_avg.nii.gz --t1="$Subdir"/anat/T1w/T1w_acpc_dc_restore.nii.gz --t1brain="$Subdir"/anat/T1w/T1w_acpc_dc_restore_brain.nii.gz --out="$Subdir"/func/xfms/rest/SBref2acpc --fmap="$Subdir"/func/field_maps/FM_rads_acpc.nii.gz --fmapmag="$Subdir"/func/field_maps/FM_mag_acpc.nii.gz \
+"$RESOURCES"/epi_reg_dof --dof=6 --epi="$Subdir"/func/xfms/rest/SBref_avg.nii.gz --t1="$Subdir"/anat/T1w/T1w_acpc_dc_restore.nii.gz --t1brain="$Subdir"/anat/T1w/T1w_acpc_dc_restore_brain.nii.gz --out="$Subdir"/func/xfms/rest/SBref2acpc --fmap="$Subdir"/func/field_maps/FM_rads_acpc.nii.gz --fmapmag="$Subdir"/func/field_maps/FM_mag_acpc.nii.gz \
 --fmapmagbrain="$Subdir"/func/field_maps/FM_mag_acpc_brain.nii.gz --echospacing="$echo_spacing" --wmseg="$Subdir"/anat/T1w/"$Subject"/mri/white.nii.gz --nofmapreg --pedir=-y > /dev/null 2>&1 # note: need to manually set --pedir
 
 # use BBRegister to fine-tune the existing co-registration; output FSL style transformation matrix;
-bbregister --s freesurfer --mov "$Subdir"/func/xfms/rest/SBref2acpc.nii.gz --init-reg "$FSL"/eye.dat --surf white.deformed --bold --reg "$Subdir"/func/xfms/rest/SBref2acpc_BBR.dat --6 --o "$Subdir"/func/xfms/rest/SBref2acpc_BBR.nii.gz > /dev/null 2>&1  
+bbregister --s freesurfer --mov "$Subdir"/func/xfms/rest/SBref2acpc.nii.gz --init-reg "$RESOURCES"/eye.dat --surf white.deformed --bold --reg "$Subdir"/func/xfms/rest/SBref2acpc_BBR.dat --6 --o "$Subdir"/func/xfms/rest/SBref2acpc_BBR.nii.gz > /dev/null 2>&1  
 tkregister2 --s freesurfer --noedit --reg "$Subdir"/func/xfms/rest/SBref2acpc_BBR.dat --mov "$Subdir"/func/xfms/rest/SBref2acpc.nii.gz --targ "$Subdir"/anat/T1w/T1w_acpc_dc_restore.nii.gz --fslregout "$Subdir"/func/xfms/rest/SBref2acpc_BBR.mat > /dev/null 2>&1  
 
 # overwrite previous SBref2acpc file; 
@@ -116,9 +114,9 @@ applywarp --interp=spline --in="$Subdir"/func/xfms/rest/SBref_avg.nii.gz --ref="
 invwarp -w "$Subdir"/func/xfms/rest/SBref2nonlin_warp.nii.gz -o "$Subdir"/func/xfms/rest/SBref2nonlin_inv_warp.nii.gz --ref="$Subdir"/func/xfms/rest/SBref_avg.nii.gz # generate an inverse warp; atlas --> distorted SBref image 
 
 # generate a set of functional brain mask (acpc + nonlin) in 2mm atlas space; 
-flirt -interp nearestneighbour -in "$Subdir"/anat/T1w/T1w_acpc_dc_restore_brain.nii.gz -ref "$T1wTemplate2mm" -out "$Subdir"/func/xfms/rest/T1w_acpc_brain_2mm.nii.gz -applyxfm -init "$FSL"/ident.mat
+flirt -interp nearestneighbour -in "$Subdir"/anat/T1w/T1w_acpc_dc_restore_brain.nii.gz -ref "$T1wTemplate2mm" -out "$Subdir"/func/xfms/rest/T1w_acpc_brain_2mm.nii.gz -applyxfm -init "$RESOURCES"/ident.mat
 fslmaths "$Subdir"/func/xfms/rest/T1w_acpc_brain_2mm.nii.gz -bin "$Subdir"/func/xfms/rest/T1w_acpc_brain_2mm_mask.nii.gz # this is a binarized version of the T1w_acpc_brain.nii.gz image in 2mm atlas space; used for masking functional data
-flirt -interp nearestneighbour -in "$Subdir"/anat/MNINonLinear/T1w_restore_brain.nii.gz -ref "$T1wTemplate2mm" -out "$Subdir"/func/xfms/rest/T1w_nonlin_brain_2mm.nii.gz -applyxfm -init "$FSL"/ident.mat # this is the T1w_restore_brain.nii.gz image in 2mm atlas space;
+flirt -interp nearestneighbour -in "$Subdir"/anat/MNINonLinear/T1w_restore_brain.nii.gz -ref "$T1wTemplate2mm" -out "$Subdir"/func/xfms/rest/T1w_nonlin_brain_2mm.nii.gz -applyxfm -init "$RESOURCES"/ident.mat # this is the T1w_restore_brain.nii.gz image in 2mm atlas space;
 fslmaths "$Subdir"/func/xfms/rest/T1w_nonlin_brain_2mm.nii.gz -bin "$Subdir"/func/xfms/rest/T1w_nonlin_brain_2mm_mask.nii.gz # this is a binarized version of the T1w_nonlin_brain.nii.gz image in 2mm atlas space; used for masking functional data
 
 # remove tmp. freesurfer folder;

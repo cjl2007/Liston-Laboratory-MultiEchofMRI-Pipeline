@@ -6,8 +6,6 @@ StudyFolder=$2
 Subdir="$StudyFolder"/"$Subject"
 RESOURCES=$3
 NTHREADS=$4
-FS="$RESOURCES/FS" # dir. with FreeSurfer (FS) atlases 
-FSL="$RESOURCES/FSL" # dir. with FSL (FSL) atlases 
 Sigma=`echo "5 / ( 2 * ( sqrt ( 2 * l ( 2 ) ) ) )" | bc -l` # define sigma for t2* mapping
 
 # fresh workspace dir.
@@ -49,7 +47,7 @@ for hemisphere in lh rh ; do
 
 	# create temporary cortical ribbon image in atlas space;
     wb_command -volume-math "(ribbon > ($ribbon - 0.01)) * (ribbon < ($ribbon + 0.01))" "$Subdir"/anat/MNINonLinear/temp_ribbon.nii.gz -var ribbon "$Subdir"/anat/MNINonLinear/ribbon.nii.gz
-    flirt -in "$Subdir"/anat/MNINonLinear/temp_ribbon.nii.gz -ref "$Subdir"/func/t2star/T2star_nonlin.nii.gz -out "$Subdir"/anat/MNINonLinear/temp_ribbon.nii.gz -applyxfm -init "$FSL"/ident.mat
+    flirt -in "$Subdir"/anat/MNINonLinear/temp_ribbon.nii.gz -ref "$Subdir"/func/t2star/T2star_nonlin.nii.gz -out "$Subdir"/anat/MNINonLinear/temp_ribbon.nii.gz -applyxfm -init "$RESOURCES"/ident.mat
 
 	# map t2s map from volume to surface using "myelin" method;
 	wb_command -volume-to-surface-mapping "$Subdir"/func/t2star/T2star_nonlin.nii.gz "$MIDTHICK" \

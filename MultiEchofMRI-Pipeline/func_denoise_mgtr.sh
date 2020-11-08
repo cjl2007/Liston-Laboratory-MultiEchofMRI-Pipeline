@@ -5,9 +5,6 @@ Subject=$1
 StudyFolder=$2
 Subdir="$StudyFolder"/"$Subject"
 RESOURCES=$3
-NTHREADS=$4
-FS="$RESOURCES/FS" # dir. with FreeSurfer (FS) atlases 
-FSL="$RESOURCES/FSL" # dir. with FSL (FSL) atlases 
 
 # fresh workspace dir.
 rm -rf "$Subdir"/workspace/ > /dev/null 2>&1 
@@ -27,9 +24,9 @@ for s in $sessions ; do
 		"$Subdir"/workspace/temp.m
 
 		# define some Matlab variables
-		echo input=["'$Subdir/func/rest/session_$s/run_$r/Ciftis/Rest_OCME+MEICA.dtseries.nii'"] | cat - "$Subdir"/workspace/temp.m > temp && mv temp "$Subdir"/workspace/temp.m
+		echo input=["'$Subdir/func/rest/session_$s/run_$r/Rest_OCME+MEICA.dtseries.nii'"] | cat - "$Subdir"/workspace/temp.m > temp && mv temp "$Subdir"/workspace/temp.m
 		echo Subdir=["'$Subdir'"]  | cat - "$Subdir"/workspace/temp.m >> temp && mv temp "$Subdir"/workspace/temp.m
-		echo output=["'$Subdir/func/rest/session_$s/run_$r/Ciftis/Rest_OCME+MEICA+MGTR.dtseries.nii'"] | cat - "$Subdir"/workspace/temp.m >> temp && mv temp "$Subdir"/workspace/temp.m
+		echo output=["'$Subdir/func/rest/session_$s/run_$r/Rest_OCME+MEICA+MGTR.dtseries.nii'"] | cat - "$Subdir"/workspace/temp.m >> temp && mv temp "$Subdir"/workspace/temp.m
 		echo "addpath(genpath('${RESOURCES}'))" | cat - "$Subdir"/workspace/temp.m >> temp && mv temp "$Subdir"/workspace/temp.m
 
 		cd "$Subdir"/workspace/ # perform mgtr using Matlab

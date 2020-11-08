@@ -14,12 +14,11 @@ fi
 Subdir="$StudyFolder"/"$Subject"
 
 # define directories
-RESOURCES="/users/must/set/this/Res0urces/" # this is a folder containing all sorts of stuff needed for this pipeline to work;
-FSL="$RESOURCES/FSL" # dir. with some FSL (FSL) atlases
-MEDIR="/users/must/set/this/MultiEchofMRI-Pipeline"
+RESOURCES="/home/charleslynch/res0urces" # this is a folder containing all sorts of stuff needed for this pipeline to work;
+MEDIR="/home/charleslynch/MultiEchofMRI-Pipeline"
 
 # set variable value that sets up environment
-EnvironmentScript="/users/must/set/this/HCPpipelines-master/Examples/Scripts/SetUpHCPPipeline.sh" # Pipeline environment script
+EnvironmentScript="/home/charleslynch/HCPpipelines-master/Examples/Scripts/SetUpHCPPipeline.sh" # Pipeline environment script
 source ${EnvironmentScript}	# Set up pipeline environment variables and software
 DIR=$(pwd) # note: this is the current dir. (the one from which we will run future sub-functions)
 T1wTemplate2mm="${HCPPIPEDIR_Templates}/MNI152_T1_2mm.nii.gz" # define the Lowres T1w MNI template
@@ -108,7 +107,7 @@ echo -e "Removing Spatially Diffuse Noise via MGTR"
 
 echo -e "Normalizing Time-Series & Applying Spatial Smoothing"
 
-# normalize time-series & 
-# perform spatiall smoothing; 
-"$MEDIR"/func_smooth.sh "$Subject" \
-"$StudyFolder" "$RESOURCES"
+# normalize time-series &  perform spatiall smoothing; 
+"$MEDIR"/func_smooth.sh "$Subject" "$StudyFolder" 
+
+

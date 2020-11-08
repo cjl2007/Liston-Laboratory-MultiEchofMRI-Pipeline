@@ -1,8 +1,10 @@
 #!/bin/bash
-# Note: this is a wrapper for the PreFreesurfer, Freesurfer, and PostFreeSurfer HCP scripts. 
+# CJL; (cjl2007@med.cornell.edu)
+# note: this script is a wrapper for the HCP's anatomical preprocessing pipeline; 
 
 StudyFolder=$1 # location of Subject folder
 Subject=$2 # space delimited list of subject IDs
+export NSLOTS=$3 # set number of cores for FreeSurfer
 
 # reformat subject folder path  
 if [ "${StudyFolder: -1}" = "/" ]; then
@@ -10,7 +12,7 @@ if [ "${StudyFolder: -1}" = "/" ]; then
 fi
 
 # Set variable value that sets up environment
-EnvironmentScript="/path/to/folder/HCPpipelines-master/Examples/Scripts/SetUpHCPPipeline.sh" # Pipeline environment script; users need to set this 
+EnvironmentScript="/home/charleslynch/HCPpipelines-master/Examples/Scripts/SetUpHCPPipeline.sh" # Pipeline environment script; users need to set this 
 source ${EnvironmentScript}	# Set up pipeline environment variables and software
 PRINTCOM="" # If PRINTCOM is not a null or empty string variable, then this script and other scripts that it calls will simply print out the primary commands it otherwise would run. This printing will be done using the command specified in the PRINTCOM variable
 

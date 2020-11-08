@@ -5,8 +5,6 @@ Subject=$1
 StudyFolder=$2
 Subdir="$StudyFolder"/"$Subject"
 RESOURCES=$3
-FS="$RESOURCES/FS" # dir. with FreeSurfer (FS) atlases 
-FSL="$RESOURCES/FSL" # dir. with FSL (FSL) atlases 
 SUBJECTS_DIR="$Subdir"/anat/T1w/ # note: this is used for "bbregister" calls;
 
 # create a white matter segmentation (.mgz --> .nii.gz);
@@ -43,12 +41,12 @@ prep_field_maps () {
 	bet "$WDIR"/"$i"_FM_mag.nii.gz "$WDIR"/"$i"_FM_mag_brain.nii.gz -f 0.35 -R # temporary bet image 
 
 	# register reference volume to the T1-weighted anatomical image; use bbr cost function 
-	"$FSL"/epi_reg_dof --epi="$WDIR"/"$i"_FM_mag.nii.gz --t1="$Subdir"/anat/T1w/T1w_acpc_dc_restore.nii.gz \
+	"$RESOURCES"/epi_reg_dof --epi="$WDIR"/"$i"_FM_mag.nii.gz --t1="$Subdir"/anat/T1w/T1w_acpc_dc_restore.nii.gz \
 	--t1brain="$Subdir"/anat/T1w/T1w_acpc_dc_restore_brain.nii.gz --out="$WDIR"/"$i"_fm2acpc \
 	--wmseg="$Subdir"/anat/T1w/"$Subject"/mri/white.nii.gz --dof=6 > /dev/null 2>&1 
 
 	# use BBRegister to fine-tune the existing co-registration; output FSL style transformation matrix; (not sure why --s isnt working, renaming dir. to "freesurfer" as an ugly workaround)
-	bbregister --s freesurfer --mov "$WDIR"/"$i"_fm2acpc.nii.gz --init-reg "$FSL"/eye.dat --surf white.deformed --bold --reg "$WDIR"/"$i"_fm2acpc_bbr.dat --6 --o "$WDIR"/"$i"_fm2acpc_bbr.nii.gz > /dev/null 2>&1  
+	bbregister --s freesurfer --mov "$WDIR"/"$i"_fm2acpc.nii.gz --init-reg "$RESOURCES"/eye.dat --surf white.deformed --bold --reg "$WDIR"/"$i"_fm2acpc_bbr.dat --6 --o "$WDIR"/"$i"_fm2acpc_bbr.nii.gz > /dev/null 2>&1  
 	tkregister2 --s freesurfer --noedit --reg "$WDIR"/"$i"_fm2acpc_bbr.dat --mov "$WDIR"/"$i"_fm2acpc.nii.gz --targ "$Subdir"/anat/T1w/T1w_acpc_dc_restore.nii.gz --fslregout "$WDIR"/"$i"_fm2acpc_bbr.mat > /dev/null 2>&1  
 
 	# combine original and fine tuned affine matrix;

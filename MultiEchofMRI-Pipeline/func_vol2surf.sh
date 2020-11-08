@@ -4,9 +4,6 @@
 Subject=$1
 StudyFolder=$2
 Subdir="$StudyFolder"/"$Subject"
-RESOURCES=$3
-FS="$RESOURCES/FS" # dir. with FreeSurfer (FS) atlases 
-FSL="$RESOURCES/FSL" # dir. with FSL (FSL) atlases 
 
 # fresh workspace dir.
 rm -rf "$Subdir"/workspace/ > /dev/null 2>&1 

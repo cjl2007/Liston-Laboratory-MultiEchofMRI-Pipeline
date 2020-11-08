@@ -7,8 +7,6 @@ Subdir="$StudyFolder"/"$Subject"
 RESOURCES=$3
 T1wTemplate2mm=$4
 NTHREADS=$5 
-FS="$RESOURCES/FS" # dir. with FreeSurfer (FS) atlases 
-FSL="$RESOURCES/FSL" # dir. with FSL (FSL) atlases 
 
 # count the number of sessions
 sessions=("$Subdir"/func/rest/session_*)
@@ -45,7 +43,6 @@ func () {
 	# define some acq. parameters;
 	te=$(cat "$2"/func/rest/"$3"/te.txt)
 	tr=$(cat "$2"/func/rest/"$3"/tr.txt)
-	
 	n_te=0 # set to zero;
 
 	# sweep the te;
@@ -68,34 +65,32 @@ func () {
 	# sweep through all of the individual volumes;
 	for i in $(seq -f "%04g" 0 $((`fslnvols "$2"/func/unprocessed/rest/"$3"/Rest*_E1.nii.gz` - 1))) ; do
 
-		n_te=0 # set to zero;
-
-		# sweep the te;
-		for ii in $te ; do
-
-			# track which te we are on
-			n_te=`expr $n_te + 1` # tick;
-
-			# skip the longer te;
-			if [[ $ii < 50 ]] ; then 
-
-				# remove signal bias; (note: these images are use only for estimating head motion; will not be submitted to denoising procedures)
-				fslmaths "$2"/func/rest/"$3"/vols/E"$n_te"_"$i".nii.gz -div "$2"/func/rest/"$3"/Bias_field.nii.gz "$2"/func/rest/"$3"/vols/E"$n_te"_"$i".nii.gz
-
-			fi
-		
-		done
-
 	  	# combine te;
-	  	fslmerge -t "$2"/func/rest/"$3"/vols/AVG_"$i".nii.gz "$2"/func/rest/"$3"/vols/E*_"$i".nii.gz > /dev/null 2>&1  
+	  	fslmerge -t "$2"/func/rest/"$3"/vols/AVG_"$i".nii.gz "$2"/func/rest/"$3"/vols/E*_"$i".nii.gz > /dev/null 2>&1  	
 		fslmaths "$2"/func/rest/"$3"/vols/AVG_"$i".nii.gz -Tmean "$2"/func/rest/"$3"/vols/AVG_"$i".nii.gz
-	    rm "$2"/func/rest/"$3"/vols/E*_"$i".nii.gz # remove individual echo volumes;
 
 	done
 
 	# merge the images;
-	fslmerge -t "$2"/func/rest/"$3"/Rest_avg.nii.gz "$2"/func/rest/"$3"/vols/AVG_*.nii.gz 
+	fslmerge -t "$2"/func/rest/"$3"/Rest_avg.nii.gz "$2"/func/rest/"$3"/vols/AVG_*.nii.gz # note: used for estimating head motion;
+	fslmerge -t "$2"/func/rest/"$3"/Rest_E1.nii.gz "$2"/func/rest/"$3"/vols/E1_*.nii.gz # note: used for estimating (very rough)bias field;
 	rm -rf "$2"/func/rest/"$3"/vols/ # remove temporary dir.
+
+	# use the first echo (w/ least amount of signal dropout) to estimate bias field;
+	fslmaths "$2"/func/rest/"$3"/Rest_E1.nii.gz -Tmean "$2"/func/rest/"$3"/Mean.nii.gz
+	N4BiasFieldCorrection -d 3 -i "$2"/func/rest/"$3"/Mean.nii.gz -s 1 -o ["$2"/func/rest/"$3"/Mean_restored.nii.gz,"$2"/func/rest/"$3"/Bias_field.nii.gz] # estimate field inhomog.; 
+	rm "$2"/func/rest/"$3"/Rest_E1.nii.gz # remove intermediate file;
+
+	# resample bias field image (ANTs --> FSL orientation);
+	flirt -in "$2"/func/rest/"$3"/Bias_field.nii.gz -ref "$2"/func/rest/"$3"/Mean.nii.gz -applyxfm \
+	-init "$RESOURCES"/ident.mat -out "$2"/func/rest/"$3"/Bias_field.nii.gz -interp spline
+
+	# remove signal bias; (note: bias field here is approximate because subjects move during scans from this initial position. These images are use only for estimating head motion and will not be submitted to denoising procedures; so probably okay);
+	fslmaths "$2"/func/rest/"$3"/Rest_avg.nii.gz -div "$2"/func/rest/"$3"/Bias_field.nii.gz "$2"/func/rest/"$3"/Rest_avg.nii.gz
+
+	# remove some intermediate files;
+	rm "$2"/func/rest/"$3"/Mean*.nii.gz
+	rm "$2"/func/rest/"$3"/Bias_field.nii.gz
 
 	# run an initial MCFLIRT to get rp. estimates prior to any slice time correction;
 	mcflirt -dof 6 -stages 3 -plots -in "$2"/func/rest/"$3"/Rest_avg.nii.gz -r "$2"/func/rest/"$3"/SBref.nii.gz -out "$2"/func/rest/"$3"/mcf
@@ -134,8 +129,7 @@ func () {
 		# sweep through the split images;
 		for (( i=0; i<${#images[@]}; i++ )); do
 
-			# warp image into 2mm MNI atlas 
-			# space using a single spline transformation; 
+			# warp image into 2mm MNI atlas space using a single spline transformation; 
 			applywarp --interp=spline --in="${images["$i"]}" --premat="${mats["$i"]}" \
 			--warp="$2"/func/xfms/rest/SBref2nonlin_warp.nii.gz --out="${images["$i"]}" --ref="$1" 
 
@@ -159,6 +153,27 @@ func () {
 	# rename mcflirt transform dir.;
 	mv "$2"/func/rest/"$3"/*_mcf*.mat \
 	"$2"/func/rest/"$3"/MCF
+
+	# use the first echo (w/ least amount of signal dropout) to estimate bias field;
+	fslmaths "$2"/func/rest/"$3"/Rest_E1_nonlin.nii.gz -Tmean "$2"/func/rest/"$3"/Mean.nii.gz
+	N4BiasFieldCorrection -d 3 -i "$2"/func/rest/"$3"/Mean.nii.gz -s 1 -o ["$2"/func/rest/"$3"/Mean.nii.gz,"$2"/func/rest/"$3"/Bias_field.nii.gz] # estimate field inhomog.; 
+
+	# resample bias field image (ANTs --> FSL orientation);
+	flirt -in "$2"/func/rest/"$3"/Bias_field.nii.gz -ref "$2"/func/rest/"$3"/Mean.nii.gz -applyxfm \
+	-init "$RESOURCES"/ident.mat -out "$2"/func/rest/"$3"/Bias_field.nii.gz -interp spline
+
+	# sweep all of the echoes; 
+	for e in $(seq 1 1 "$n_te") ; do
+
+		# remove signal bias; 
+		fslmaths "$2"/func/rest/"$3"/Rest_E"$e"_nonlin.nii.gz \
+		-div "$2"/func/rest/"$3"/Bias_field.nii.gz \
+		"$2"/func/rest/"$3"/Rest_E"$e"_nonlin.nii.gz
+
+	done
+
+	# remove some intermediate files;
+	rm "$2"/func/rest/"$3"/Mean.nii.gz
 
 }
 
