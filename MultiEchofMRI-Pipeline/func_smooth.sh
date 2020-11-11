@@ -5,6 +5,10 @@ Subject=$1
 StudyFolder=$2
 Subdir="$StudyFolder"/"$Subject"
 
+# count the number of sessions
+sessions=("$Subdir"/func/rest/session_*)
+sessions=$(seq 1 1 "${#sessions[@]}")
+
 # sweep through sessions;
 for s in $sessions ; do
 

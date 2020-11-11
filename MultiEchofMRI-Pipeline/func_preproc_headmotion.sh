@@ -132,20 +132,14 @@ func () {
 		for (( i=0; i<${#images[@]}; i++ )); do
 
 			# warp image into 2mm MNI atlas space using a single spline transformation; 
-			applywarp --interp=spline --in="${images["$i"]}" --premat="${mats["$i"]}" --warp="$2"/func/xfms/rest/SBref2nonlin_warp.nii.gz --out="${images["$i"]}" --ref="$1"
-			fslmaths "${images["$i"]}" -uthr 0 -mul -1 -bin "$2"/func/rest/"$3"/Rest_AVG_mcf.mat/bad_voxels.nii.gz # remove negative values created by spline interp.;
- 			wb_command -volume-dilate "${images["$i"]}" 10 NEAREST "${images["$i"]}" -bad-voxel-roi "$2"/func/rest/"$3"/Rest_AVG_mcf.mat/bad_voxels.nii.gz # note: 10mm is arbitrary; 99% of the time these voxels are not "in-brain"
-
+			applywarp --interp=spline --in="${images["$i"]}" --premat="${mats["$i"]}" \
+			--warp="$2"/func/xfms/rest/SBref2nonlin_warp.nii.gz --out="${images["$i"]}" --ref="$1"
+	
 		done
 
-		# merge corrected images into a single file;
-		fslmerge -t "$2"/func/rest/"$3"/Rest_E"$e"_nonlin.nii.gz \
-		"$2"/func/rest/"$3"/Rest_AVG_mcf.mat/*.nii.gz
-
-		# perform a brain extraction
-		fslmaths "$2"/func/rest/"$3"/Rest_E"$e"_nonlin.nii.gz \
-		-mas "$2"/func/xfms/rest/T1w_nonlin_brain_2mm_mask.nii.gz \
-		"$2"/func/rest/"$3"/Rest_E"$e"_nonlin.nii.gz # note: this step reduces file size, which is generally desirable but not absolutely needed.
+		# merge corrected images into a single file & perform a brain extraction
+		fslmerge -t "$2"/func/rest/"$3"/Rest_E"$e"_nonlin.nii.gz "$2"/func/rest/"$3"/Rest_AVG_mcf.mat/*.nii.gz
+		fslmaths "$2"/func/rest/"$3"/Rest_E"$e"_nonlin.nii.gz -mas "$2"/func/xfms/rest/T1w_nonlin_brain_2mm_mask.nii.gz "$2"/func/rest/"$3"/Rest_E"$e"_nonlin.nii.gz # note: this step reduces file size, which is generally desirable but not absolutely needed.
 
 		# remove some intermediate files;
 		rm "$2"/func/rest/"$3"/Rest_AVG_mcf.mat/*.nii.gz # split volumes
@@ -159,6 +153,7 @@ func () {
 
 	# use the first echo (w/ least amount of signal dropout) to estimate bias field;
 	fslmaths "$2"/func/rest/"$3"/Rest_E1_nonlin.nii.gz -Tmean "$2"/func/rest/"$3"/Mean.nii.gz
+	fslmaths "$2"/func/rest/"$3"/Mean.nii.gz -thr 0 "$2"/func/rest/"$3"/Mean.nii.gz # remove any negative values introduced by spline interpolation;
 	N4BiasFieldCorrection -d 3 -i "$2"/func/rest/"$3"/Mean.nii.gz -s 1 -o ["$2"/func/rest/"$3"/Mean_Restored.nii.gz,"$2"/func/rest/"$3"/Bias_field.nii.gz] # estimate field inhomog.; 
 	flirt -in "$2"/func/rest/"$3"/Bias_field.nii.gz -ref "$2"/func/rest/"$3"/Mean.nii.gz -applyxfm -init "$RESOURCES"/ident.mat -out "$2"/func/rest/"$3"/Bias_field.nii.gz -interp spline # resample bias field image (ANTs --> FSL orientation);
 
@@ -166,9 +161,9 @@ func () {
 	for e in $(seq 1 1 "$n_te") ; do
 
 		# correct for signal inhomogenties;
-		fslmaths "$2"/func/rest/"$3"/Rest_E"$e".nii.gz -div \
-		"$2"/func/rest/"$3"/Bias_field.nii.gz \
-		"$2"/func/rest/"$3"/Rest_E"$e".nii.gz
+		fslmaths "$2"/func/rest/"$3"/Rest_E"$e"_nonlin.nii.gz \
+		-div "$2"/func/rest/"$3"/Bias_field.nii.gz \
+		"$2"/func/rest/"$3"/Rest_E"$e"_nonlin.nii.gz
 
 	done
 

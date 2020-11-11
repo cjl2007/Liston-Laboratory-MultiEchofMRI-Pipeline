@@ -20,7 +20,7 @@ MEDIR="/home/charleslynch/MultiEchofMRI-Pipeline"
 # set variable value that sets up environment
 EnvironmentScript="/home/charleslynch/HCPpipelines-master/Examples/Scripts/SetUpHCPPipeline.sh" # Pipeline environment script
 source ${EnvironmentScript}	# Set up pipeline environment variables and software
-DIR=$(pwd) # note: this is the current dir. 
+DIR=$(pwd) # note: this is the current dir. (the one from which we will run future sub-functions)
 T1wTemplate2mm="${HCPPIPEDIR_Templates}/MNI152_T1_2mm.nii.gz" # define the Lowres T1w MNI template
 
 echo -e "\nMulti-Echo Preprocessing & Denoising Pipeline" 
