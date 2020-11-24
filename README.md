@@ -14,4 +14,5 @@ Required Software
 - Connectome Workbench 
 - ANTS
 - Tedana
+- GNU
 
