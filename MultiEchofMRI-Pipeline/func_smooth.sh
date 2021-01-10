@@ -10,7 +10,7 @@ KernelSize=$3
 sessions=("$Subdir"/func/rest/session_*)
 sessions=$(seq 1 1 "${#sessions[@]}")
 
-# sweep through sessions;
+# sweep the sessions;
 for s in $sessions ; do
 
 	# count number of runs for this session;
@@ -31,7 +31,7 @@ for s in $sessions ; do
 
 			# smooth with geodesic (for surface data) and Euclidean (for volumetric data) Gaussian kernels; 
 			wb_command -cifti-smoothing "$Subdir"/func/rest/session_"$s"/run_"$r"/Rest_"$i".dtseries.nii "$KernelSize" "$KernelSize" COLUMN "$Subdir"/func/rest/session_"$s"/run_"$r"/Rest_"$i"_s"$KernelSize".dtseries.nii \
-			-left-surface "$Subdir"/anat/T1w/fsaverage_LR32k/"$Subject".L.midthickness.32k_fs_LR.surf.gii -right-surface "$Subdir"/anat/T1w/fsaverage_LR32k/"$Subject".R.midthickness.32k_fs_LR.surf.gii > /dev/null 2>&1
+			-left-surface "$Subdir"/anat/T1w/fsaverage_LR32k/"$Subject".L.midthickness.32k_fs_LR.surf.gii -right-surface "$Subdir"/anat/T1w/fsaverage_LR32k/"$Subject".R.midthickness.32k_fs_LR.surf.gii -merged-volume > /dev/null 2>&1
 
 			# remove some intermediate files;
 			rm "$Subdir"/func/rest/session_"$s"/run_"$r"/MEAN.dscalar.nii 
