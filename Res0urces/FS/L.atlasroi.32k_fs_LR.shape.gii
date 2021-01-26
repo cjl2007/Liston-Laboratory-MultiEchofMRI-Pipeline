@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GIFTI xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="http://brainvis.wustl.edu/caret6/xml_schemas/GIFTI_Caret.xsd"
+       Version="1"
+       NumberOfDataArrays="1">
+   <MetaData>
+      <MD>
+         <Name><![CDATA[AnatomicalStructurePrimary]]></Name>
+         <Value><![CDATA[CortexLeft]]></Value>
+      </MD>
+      <MD>
+         <Name><![CDATA[ProgramProvenance]]></Name>
+         <Value><![CDATA[Connectome Workbench
+Type: Command Line Application
+Version: 1.3.2
+Qt Compiled Version: 5.7.0
+Qt Runtime Version: 5.7.0
+Commit: 1c774d37d6cb5a179e0de3cbe1081cd1f698963a
+Commit Date: 2018-08-28 08:50:51 -0500
+Compiled with OpenMP: YES
+Compiler: g++ (/home/caret/gcc/install/gcc-4.8.5/bin)
+Compiler Version: 4.8.5
+Compiled Debug: NO
+Operating System: Linux
+]]></Value>
+      </MD>
+      <MD>
+         <Name><![CDATA[Provenance]]></Name>
+         <Value><![CDATA[/usr/local/workbench/bin_linux64/../exe_linux64/wb_command -cifti-separate /home/charleslynch/Desktop/Projects/SIMD/res0urces/MSC_Templates_17.dscalar.nii COLUMN -metric CORTEX_LEFT /home/charleslynch/Desktop/Projects/SIMD/data/simd_001/workspace/lh_msc_templates.func.gii -roi /home/charleslynch/Desktop/Projects/SIMD/res0urces/FS/L.atlasroi.32k_fs_LR.shape.gii]]></Value>
+      </MD>
+      <MD>
+         <Name><![CDATA[WorkingDirectory]]></Name>
+         <Value><![CDATA[/home/charleslynch/Desktop/Projects/SIMD/scripts]]></Value>
+      </MD>
+   </MetaData>
+   <LabelTable>
+      <Label Key="0" Red="1" Green="1" Blue="1" Alpha="0"><![CDATA[???]]></Label>
+   </LabelTable>
+<DataArray Intent="NIFTI_INTENT_NORMAL"
+           DataType="NIFTI_TYPE_FLOAT32"
+           ArrayIndexingOrder="RowMajorOrder"
+           Dimensionality="1"
+           Dim0="32492"
+           Encoding="GZipBase64Binary"
+           Endian="LittleEndian"
+           ExternalFileName=""
+           ExternalFileOffset="0">
+   <MetaData>
+   </MetaData>
+   <Data>eJzt3EtOw0AQBNDcjKtxdMQCCUXKx54Zd9fklfQ2oExXywE7m9xu31+3h37z7PfPXpeaM/sm6ZpP3/+d2Csnu+20+y6J2WGP9B10vz6JvdPe57rOT8J7oHvHzv26duv47Nbt+bhTny6fYTv0eNVhdZfus1d0qJh79cwj80ZnHp11dt6ZOUdnnZ3x7pyOZ7+aseLc0TPvz5553qyzgL2Npro/AHSXet9MvOenPaskPV+lPBceSULHip6d+51N114ru3Xr1KnPaDr06NBhRo8ZSdt9RrrPvHLeVbOumLN6xsrzV509Kyu7zjxv1lkdzpC9M3r/BwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgE80kr/Xr54z0g/gk6T//9vhf3hy/9Tuib3TOif1Teta3SG5Y/dr3bVbt14dr2OnPl26dOhR3aFyftXsirnV1xmAOo/uAfc////8+E6q9wIAAAAAAAAAAAAAAAAAAAAAAABgXOL3yz36Pr2k7807k+rOs/botsto9K/prvc1ndP6VvSelZSeK7teme79jnasTtde9+nYSURERET2yJWfQxmz87Xbca/ddtpln53+jnbYI32H5P6p3RN7p3VO7Vvd492u1R126AgAAAAAAAAAAAAAAAAAAOzqB+95kQs=</Data>
+</DataArray>
+</GIFTI>
