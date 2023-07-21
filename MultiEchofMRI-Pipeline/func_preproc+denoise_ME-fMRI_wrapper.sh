@@ -26,6 +26,11 @@ Subdir="$StudyFolder"/"$Subject"
 # custom matlab scripts and various atlas files;
 MEDIR="/home/charleslynch/MultiEchofMRI-Pipeline"
 
+# check to see if there's a symlink to res0urces here
+if ! [[ -e ${MEDIR}/res0urces ]]; then
+    ln -s ${MEDIR}/../Res0urces ${MEDIR}/res0urces
+fi
+
 # these variables should not be changed unless you have a very good reason
 DOF=6 # this is the degrees of freedom (DOF) used for SBref --> T1w and EPI --> SBref coregistrations;
 CiftiList="$MEDIR"/config/CiftiList.txt # .txt file containing list of files to be mapped to surface. user can specify OCME, OCME+MEICA, OCME+MEICA+MGTR, and/or OCME+MEICA+MGTR_Betas
