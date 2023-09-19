@@ -67,17 +67,17 @@ echo -e "Performing Signal-Decay Based Denoising"
 "$MEDIR"/func_denoise_meica.sh "$Subject" "$StudyFolder" "$NTHREADS" \
 "$MEPCA" "$MaxIterations" "$MaxRestarts" "$StartSession"
 
-echo -e "Removing Spatially Diffuse Noise via MGTR"
+# echo -e "Removing Spatially Diffuse Noise via MGTR"
 
-# remove spatially diffuse noise; 
-"$MEDIR"/func_denoise_mgtr.sh "$Subject" \
-"$StudyFolder" "$MEDIR" "$StartSession"
+# # remove spatially diffuse noise; 
+# "$MEDIR"/func_denoise_mgtr.sh "$Subject" \
+# "$StudyFolder" "$MEDIR" "$StartSession"
 
-echo -e "Mapping Denoised Functional Data to Surface"
+# echo -e "Mapping Denoised Functional Data to Surface"
 
-# volume-to-surface + spatial smoothing mapping;
-"$MEDIR"/func_vol2surf.sh "$Subject" "$StudyFolder" \
-"$MEDIR" "$CiftiList" "$StartSession"
+# # volume-to-surface + spatial smoothing mapping;
+# "$MEDIR"/func_vol2surf.sh "$Subject" "$StudyFolder" \
+# "$MEDIR" "$CiftiList" "$StartSession"
 
 
 
