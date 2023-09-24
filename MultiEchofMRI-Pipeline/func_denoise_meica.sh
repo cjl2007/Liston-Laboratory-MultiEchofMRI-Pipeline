@@ -184,9 +184,6 @@ rm "$Subdir"/data_dirs.txt # remove intermediate file;
 rm -rf "$Subdir"/workspace/
 cd "$Subdir" # go back to subject dir. 
 
-# activate tedana v10;
-source activate me_v10 
-
 func () {
 
 	# make sure that the explicit brain mask and T2* map match; 
