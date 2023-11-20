@@ -1,6 +1,7 @@
 
-% load the template network FC maps;
-TemplateFC = ft_read_cifti_mod('TemplateNetworkFC.dtseries.nii');
+% load priors;
+load('Priors.mat');
+TemplateFC = Priors.FC;
 
 % load .json file;
 json = loadjson([data_dir '/Tedana/ica_decomposition.json']);
@@ -28,7 +29,7 @@ IC = ft_read_cifti_mod([data_dir '/Tedana/betas_OC.dtseries.nii']);
 
 % calculate spatial similarity
 % between the  "noise" ICs and template networks;
-rho = corr(IC.data(1:59412,acc+1),TemplateFC.data(1:59412,:));
+rho = corr(IC.data(1:59412,acc+1),TemplateFC);
 
 % manually reject any components with r < 0.1
 % spatial correlation with network templates;
