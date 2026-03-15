@@ -1,3 +1,5 @@
+This repo is depracted, link to new repo with more user friendly / containerized version of this codebase to to follow. 
+
 # Liston-Laboratory-MultiEchofMRI-Pipeline
 Repository for "Rapid precision mapping of individuals using multi-echo fMRI" ; Lynch et al. 2020 Cell Reports.
 
